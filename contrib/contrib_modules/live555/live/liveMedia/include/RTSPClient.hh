@@ -39,6 +39,8 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #endif
 #endif
 
+#define VLC_PATCH_RTSPCLIENT_SERVERSTRING
+
 class RTSPClient: public Medium {
 public:
   static RTSPClient* createNew(UsageEnvironment& env, char const* rtspURL,
@@ -194,6 +196,7 @@ public:
   unsigned sessionTimeoutParameter() const { return fSessionTimeoutParameter; }
 
   char const* url() const { return fBaseURL; }
+  char const* serverString() const { return fserverString; }
 
   static unsigned responseBufferSize;
 
@@ -246,6 +249,7 @@ protected:
 
   void reset();
   void setBaseURL(char const* url);
+  void setServerString(char const* str);
   int grabSocket(); // allows a subclass to reuse our input socket, so that it won't get closed when we're deleted
   virtual unsigned sendRequest(RequestRecord* request);
   virtual Boolean setRequestFields(RequestRecord* request,
@@ -347,6 +351,7 @@ private:
   unsigned fUserAgentHeaderStrLen;
   int fInputSocketNum, fOutputSocketNum;
   char* fBaseURL;
+  char *fserverString;
   unsigned char fTCPStreamIdCount; // used for (optional) RTP/TCP
   char* fLastSessionId;
   unsigned fSessionTimeoutParameter; // optionally set in response "Session:" headers

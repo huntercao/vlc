@@ -42,11 +42,17 @@ extern "C" int initializeWinsockIfNecessary();
 #include <signal.h>
 #define USE_SIGNALS 1
 #endif
+#if (defined(__ANDROID__) && __ANDROID_API__ < 24)
+#define NO_GETIFADDRS
+#endif
 #ifndef NO_GETIFADDRS
 #include <ifaddrs.h>
 #include <net/if.h>
 #endif
 #include <stdio.h>
+#ifndef MSG_NOSIGNAL
+# define MSG_NOSIGNAL 0
+#endif
 
 // By default, use INADDR_ANY for the sending and receiving interfaces (IPv4 only):
 ipv4AddressBits SendingInterfaceAddr = INADDR_ANY;
@@ -447,7 +453,7 @@ Boolean writeSocket(UsageEnvironment& env,
 		    unsigned char* buffer, unsigned bufferSize) {
   do {
     SOCKLEN_T dest_len = addressSize(addressAndPort);
-    int bytesSent = sendto(socket, (char*)buffer, bufferSize, 0,
+    int bytesSent = sendto(socket, (char*)buffer, bufferSize, MSG_NOSIGNAL,
 			   (struct sockaddr const*)&addressAndPort, dest_len);
     if (bytesSent != (int)bufferSize) {
       char tmpBuf[100];

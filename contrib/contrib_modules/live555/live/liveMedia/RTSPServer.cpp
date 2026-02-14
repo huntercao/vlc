@@ -23,6 +23,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "RTSPRegisterSender.hh"
 #include "Base64.hh"
 #include <GroupsockHelper.hh>
+#ifndef MSG_NOSIGNAL
+# define MSG_NOSIGNAL 0
+#endif
 
 ////////// RTSPServer implementation //////////
 
@@ -976,7 +979,7 @@ void RTSPServer::RTSPClientConnection::handleRequestBytes(int newBytesRead) {
     if (fOutputTLS->isNeeded) {
         fOutputTLS->write((char const*)fResponseBuffer, numBytesToWrite);
     } else {
-        send(fClientOutputSocket, (char const*)fResponseBuffer, numBytesToWrite, 0);
+        send(fClientOutputSocket, (char const*)fResponseBuffer, numBytesToWrite, MSG_NOSIGNAL);
    }
     
     if (playAfterSetup) {

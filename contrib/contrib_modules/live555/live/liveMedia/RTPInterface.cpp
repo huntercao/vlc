@@ -23,6 +23,9 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "RTPInterface.hh"
 #include <GroupsockHelper.hh>
 #include <stdio.h>
+#ifndef MSG_NOSIGNAL
+# define MSG_NOSIGNAL 0
+#endif
 
 ////////// Helper Functions - Definition //////////
 
@@ -382,7 +385,7 @@ Boolean RTPInterface::sendDataOverTCP(int socketNum, TLSState* tlsState,
 				      Boolean forceSendToSucceed) {
   int sendResult = (tlsState != NULL && tlsState->isNeeded)
     ? tlsState->write((char const*)data, dataSize)
-    : send(socketNum, (char const*)data, dataSize, 0/*flags*/);
+    : send(socketNum, (char const*)data, dataSize, MSG_NOSIGNAL);
   if (sendResult < (int)dataSize) {
     // The TCP send() failed - at least partially.
 
@@ -398,7 +401,7 @@ Boolean RTPInterface::sendDataOverTCP(int socketNum, TLSState* tlsState,
       makeSocketBlocking(socketNum, RTPINTERFACE_BLOCKING_WRITE_TIMEOUT_MS);
       sendResult = (tlsState != NULL && tlsState->isNeeded)
 	? tlsState->write((char const*)(&data[numBytesSentSoFar]), numBytesRemainingToSend)
-	: send(socketNum, (char const*)(&data[numBytesSentSoFar]), numBytesRemainingToSend, 0/*flags*/);
+	: send(socketNum, (char const*)(&data[numBytesSentSoFar]), numBytesRemainingToSend, MSG_NOSIGNAL);
       makeSocketNonBlocking(socketNum);
       if ((unsigned)sendResult != numBytesRemainingToSend) {
 	// The blocking "send()" failed, or timed out.  In either case, we assume that the
