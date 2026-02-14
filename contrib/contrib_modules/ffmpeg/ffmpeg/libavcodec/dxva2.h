@@ -38,6 +38,8 @@
 #include <d3d9.h>
 #include <dxva2api.h>
 
+#define FF_DXVA2_WORKAROUND_HEVC_REXT  4
+
 /**
  * @defgroup lavc_codec_hwaccel_dxva2 DXVA2
  * @ingroup lavc_codec_hwaccel

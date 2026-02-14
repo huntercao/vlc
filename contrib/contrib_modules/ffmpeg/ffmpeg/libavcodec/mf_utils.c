@@ -19,7 +19,9 @@
 #define COBJMACROS
 #if !defined(_WIN32_WINNT) || _WIN32_WINNT < 0x0602
 #undef _WIN32_WINNT
+#undef WINVER
 #define _WIN32_WINNT 0x0602
+#define WINVER 0x0602
 #endif
 
 #include "mf_utils.h"

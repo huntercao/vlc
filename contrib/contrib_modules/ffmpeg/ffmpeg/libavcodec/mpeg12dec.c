@@ -1308,14 +1308,6 @@ static int mpeg_field_start(Mpeg1Context *s1, const uint8_t *buf, int buf_size)
             av_log(s->avctx, AV_LOG_ERROR, "first field missing\n");
             return AVERROR_INVALIDDATA;
         }
-
-        if (s->avctx->hwaccel) {
-            if ((ret = FF_HW_SIMPLE_CALL(s->avctx, end_frame)) < 0) {
-                av_log(avctx, AV_LOG_ERROR,
-                       "hardware accelerator failed to decode first field\n");
-                return ret;
-            }
-        }
         ret = ff_mpv_alloc_dummy_frames(s);
         if (ret < 0)
             return ret;
@@ -2249,9 +2241,14 @@ static int decode_chunks(AVCodecContext *avctx, AVFrame *picture,
             if (!skip_frame) {
                 mpeg12_execute_slice_threads(avctx, s);
 
-                ret = slice_end(avctx, picture, got_output);
+                if (s->first_slice) // not started yet. don't end it
+                    ret = 0;
+                else
+                    ret = slice_end(avctx, picture, got_output);
                 if (ret < 0)
                     return ret;
+                // slice ended, don't end it again later
+                s->first_slice = 1;
             }
             s2->pict_type = 0;
 

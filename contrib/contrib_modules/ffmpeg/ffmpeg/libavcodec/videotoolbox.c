@@ -818,7 +818,9 @@ static CFDictionaryRef videotoolbox_buffer_attributes_create(int width,
     CFDictionarySetValue(buffer_attributes, kCVPixelBufferWidthKey, w);
     CFDictionarySetValue(buffer_attributes, kCVPixelBufferHeightKey, h);
 #if TARGET_OS_IPHONE
+#ifndef TARGET_OS_VISION
     CFDictionarySetValue(buffer_attributes, kCVPixelBufferOpenGLESCompatibilityKey, kCFBooleanTrue);
+#endif
 #else
     CFDictionarySetValue(buffer_attributes, kCVPixelBufferIOSurfaceOpenGLTextureCompatibilityKey, kCFBooleanTrue);
 #endif

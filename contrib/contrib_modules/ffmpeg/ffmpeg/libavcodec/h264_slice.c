@@ -1090,8 +1090,10 @@ static int h264_init_ps(H264Context *h, const H264SliceContext *sl, int first_sl
         || (non_j_pixfmt(h->avctx->pix_fmt) != non_j_pixfmt(get_pixel_format(h, 0))))
         must_reinit = 1;
 
-    if (first_slice && av_cmp_q(sps->vui.sar, h->avctx->sample_aspect_ratio))
+    if (first_slice && av_cmp_q(sps->vui.sar, h->avctx->sample_aspect_ratio)) {
         must_reinit = 1;
+        ff_set_sar(h->avctx, sps->vui.sar);
+    }
 
     if (!h->setup_finished) {
         h->avctx->profile = ff_h264_get_profile(sps);

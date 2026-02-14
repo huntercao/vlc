@@ -650,6 +650,16 @@ static enum AVPixelFormat get_format(HEVCContext *s, const HEVCSPS *sps)
 #if CONFIG_HEVC_VAAPI_HWACCEL
         *fmt++ = AV_PIX_FMT_VAAPI;
 #endif
+#if CONFIG_HEVC_DXVA2_HWACCEL
+        *fmt++ = AV_PIX_FMT_DXVA2_VLD;
+#endif
+#if CONFIG_HEVC_D3D11VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D11VA_VLD;
+        *fmt++ = AV_PIX_FMT_D3D11;
+#endif
+#if CONFIG_HEVC_D3D12VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D12;
+#endif
 #if CONFIG_HEVC_VDPAU_HWACCEL
         *fmt++ = AV_PIX_FMT_VDPAU;
 #endif
@@ -677,6 +687,16 @@ static enum AVPixelFormat get_format(HEVCContext *s, const HEVCSPS *sps)
 #if CONFIG_HEVC_NVDEC_HWACCEL
         *fmt++ = AV_PIX_FMT_CUDA;
 #endif
+#if CONFIG_HEVC_DXVA2_HWACCEL
+        *fmt++ = AV_PIX_FMT_DXVA2_VLD;
+#endif
+#if CONFIG_HEVC_D3D11VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D11VA_VLD;
+        *fmt++ = AV_PIX_FMT_D3D11;
+#endif
+#if CONFIG_HEVC_D3D12VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D12;
+#endif
         break;
     case AV_PIX_FMT_YUV444P10:
 #if CONFIG_HEVC_VIDEOTOOLBOX_HWACCEL
@@ -687,6 +707,16 @@ static enum AVPixelFormat get_format(HEVCContext *s, const HEVCSPS *sps)
     case AV_PIX_FMT_YUV444P12:
 #if CONFIG_HEVC_VAAPI_HWACCEL
        *fmt++ = AV_PIX_FMT_VAAPI;
+#endif
+#if CONFIG_HEVC_DXVA2_HWACCEL
+        *fmt++ = AV_PIX_FMT_DXVA2_VLD;
+#endif
+#if CONFIG_HEVC_D3D11VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D11VA_VLD;
+        *fmt++ = AV_PIX_FMT_D3D11;
+#endif
+#if CONFIG_HEVC_D3D12VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D12;
 #endif
 #if CONFIG_HEVC_VDPAU_HWACCEL
         *fmt++ = AV_PIX_FMT_VDPAU;
@@ -707,6 +737,16 @@ static enum AVPixelFormat get_format(HEVCContext *s, const HEVCSPS *sps)
 #endif
 #if CONFIG_HEVC_NVDEC_HWACCEL
         *fmt++ = AV_PIX_FMT_CUDA;
+#endif
+#if CONFIG_HEVC_DXVA2_HWACCEL
+        *fmt++ = AV_PIX_FMT_DXVA2_VLD;
+#endif
+#if CONFIG_HEVC_D3D11VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D11VA_VLD;
+        *fmt++ = AV_PIX_FMT_D3D11;
+#endif
+#if CONFIG_HEVC_D3D12VA_HWACCEL
+        *fmt++ = AV_PIX_FMT_D3D12;
 #endif
         break;
     }

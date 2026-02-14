@@ -33,6 +33,7 @@
 
 #define FF_DXVA2_WORKAROUND_SCALING_LIST_ZIGZAG 1 ///< Work around for DXVA2/Direct3D11 and old UVD/UVD+ ATI video cards
 #define FF_DXVA2_WORKAROUND_INTEL_CLEARVIDEO    2 ///< Work around for DXVA2/Direct3D11 and old Intel GPUs with ClearVideo interface
+#define FF_DXVA2_WORKAROUND_INTEL_HEVC_REXT     4 ///< Signal the DXVA2 decoder is using the HEVC Rext picture structure
 
 #if CONFIG_DXVA2
 #include "dxva2.h"
@@ -113,6 +114,44 @@ typedef struct FFDXVASharedContext {
     AVDXVAContext ctx;
 } FFDXVASharedContext;
 
+#pragma pack(push, 1)
+typedef struct
+{
+    DXVA_PicParams_HEVC main;
+
+    // HEVC Range Extension
+    union {
+        struct {
+            UINT32 transform_skip_rotation_enabled_flag : 1;
+            UINT32 transform_skip_context_enabled_flag : 1;
+            UINT32 implicit_rdpcm_enabled_flag : 1;
+            UINT32 explicit_rdpcm_enabled_flag : 1;
+            UINT32 extended_precision_processing_flag : 1;
+            UINT32 intra_smoothing_disabled_flag : 1;
+            UINT32 high_precision_offsets_enabled_flag : 1;
+            UINT32 persistent_rice_adaptation_enabled_flag : 1;
+            UINT32 cabac_bypass_alignment_enabled_flag : 1;
+            UINT32 cross_component_prediction_enabled_flag : 1;
+            UINT32 chroma_qp_offset_list_enabled_flag : 1;
+            UINT32 BitDepthLuma16 : 1; // TODO merge in ReservedBits5 if not needed
+            UINT32 BitDepthChroma16 : 1; // TODO merge in ReservedBits5 if not needed
+            UINT32 ReservedBits8 : 19;
+        };
+        UINT32 dwRangeExtensionFlags;
+    };
+
+    UCHAR diff_cu_chroma_qp_offset_depth;
+    UCHAR chroma_qp_offset_list_len_minus1;
+    UCHAR log2_sao_offset_scale_luma;
+    UCHAR log2_sao_offset_scale_chroma;
+    UCHAR log2_max_transform_skip_block_size_minus2;
+    CHAR cb_qp_offset_list[6];
+    CHAR cr_qp_offset_list[6];
+
+} DXVA_PicParams_HEVC_Rext;
+#pragma pack(pop)
+
+
 #define DXVA_SHARED_CONTEXT(avctx) ((FFDXVASharedContext *)((avctx)->internal->hwaccel_priv_data))
 
 #define DXVA_CONTEXT(avctx) (AVDXVAContext *)((avctx)->hwaccel_context ? (avctx)->hwaccel_context : (&(DXVA_SHARED_CONTEXT(avctx)->ctx)))
@@ -172,7 +211,7 @@ void ff_dxva2_h264_fill_picture_parameters(const AVCodecContext *avctx, AVDXVACo
 void ff_dxva2_h264_fill_scaling_lists(const AVCodecContext *avctx, AVDXVAContext *ctx, DXVA_Qmatrix_H264 *qm);
 
 #if CONFIG_HEVC_D3D12VA_HWACCEL || CONFIG_HEVC_D3D11VA_HWACCEL || CONFIG_HEVC_D3D11VA2_HWACCEL || CONFIG_HEVC_DXVA2_HWACCEL
-void ff_dxva2_hevc_fill_picture_parameters(const AVCodecContext *avctx, AVDXVAContext *ctx, DXVA_PicParams_HEVC *pp);
+void ff_dxva2_hevc_fill_picture_parameters(const AVCodecContext *avctx, AVDXVAContext *ctx, DXVA_PicParams_HEVC_Rext *pp);
 
 void ff_dxva2_hevc_fill_scaling_lists(const AVCodecContext *avctx, AVDXVAContext *ctx, DXVA_Qmatrix_HEVC *qm);
 #endif

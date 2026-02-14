@@ -50,11 +50,11 @@ void ff_dxva2_mpeg2_fill_picture_parameters(AVCodecContext *avctx,
 
     memset(pp, 0, sizeof(*pp));
     pp->wDeblockedPictureIndex       = 0;
-    if (s->pict_type != AV_PICTURE_TYPE_I)
+    if (s->pict_type != AV_PICTURE_TYPE_I && s->last_pic.ptr)
         pp->wForwardRefPictureIndex  = ff_dxva2_get_surface_index(avctx, ctx, s->last_pic.ptr->f, 0);
     else
         pp->wForwardRefPictureIndex  = 0xffff;
-    if (s->pict_type == AV_PICTURE_TYPE_B)
+    if (s->pict_type == AV_PICTURE_TYPE_B && s->next_pic.ptr)
         pp->wBackwardRefPictureIndex = ff_dxva2_get_surface_index(avctx, ctx, s->next_pic.ptr->f, 0);
     else
         pp->wBackwardRefPictureIndex = 0xffff;

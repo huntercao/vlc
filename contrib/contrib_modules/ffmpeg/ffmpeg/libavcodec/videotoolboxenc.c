@@ -1218,8 +1218,10 @@ static int vtenc_create_encoder(AVCodecContext   *avctx,
         return AVERROR_EXTERNAL;
     }
 
-#if defined (MAC_OS_X_VERSION_10_13) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13)
-    if (__builtin_available(macOS 10.13, iOS 11.0, *)) {
+#if (TARGET_OS_OSX    && defined(__MAC_13_0)    && __MAC_OS_X_VERSION_MAX_ALLOWED  >= __MAC_13_0)     || \
+    (TARGET_OS_IOS    && defined(__IPHONE_11_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_11_0)  || \
+    (TARGET_OS_TV     && defined(__TVOS_11_0)   && __TV_OS_VERSION_MAX_ALLOWED     >= __TVOS_11_0)
+    if (__builtin_available(macOS 10.13, iOS 11, tvOS 11, *)) {
         if (vtctx->supported_props) {
             CFRelease(vtctx->supported_props);
             vtctx->supported_props = NULL;
@@ -1235,12 +1237,12 @@ static int vtenc_create_encoder(AVCodecContext   *avctx,
             av_log(avctx, AV_LOG_ERROR,"Error retrieving the supported property dictionary err=%"PRId64"\n", (int64_t)status);
             return AVERROR_EXTERNAL;
         }
-    }
-#endif
 
     status = vt_dump_encoder(avctx);
     if (status < 0)
         return status;
+    }
+#endif
 
     if (avctx->flags & AV_CODEC_FLAG_QSCALE && !vtenc_qscale_enabled()) {
         av_log(avctx, AV_LOG_ERROR, "Error: -q:v qscale not available for encoder. Use -b:v bitrate instead.\n");

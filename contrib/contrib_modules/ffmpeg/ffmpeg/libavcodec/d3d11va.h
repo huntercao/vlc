@@ -38,6 +38,8 @@
 #include <stdint.h>
 #include <d3d11.h>
 
+#define FF_DXVA2_WORKAROUND_HEVC_REXT  4
+
 /**
  * @defgroup lavc_codec_hwaccel_d3d11va Direct3D11
  * @ingroup lavc_codec_hwaccel
